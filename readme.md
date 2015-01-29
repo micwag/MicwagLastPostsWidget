@@ -1,9 +1,9 @@
 # WP Last Posts Widget
-Contributors: micwag
-Tags: widget, free, post, news, developer, posts, simple
-Stable tag: 4.1
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+- **Contributors**: micwag
+- **Tags**: widget, free, post, news, developer, posts, simple
+- **Stable tag**: 4.1
+- **License**: GPLv2 or later
+- **License URI**: http://www.gnu.org/licenses/gpl-2.0.html
 
 The widget displays the latest posts using custom markup which can be completely changed. It doesn't add anything
 other (stylesheets, javascripts etc.) to the page.
