@@ -24,7 +24,47 @@ class WPLastPostsWidget extends WP_Widget {
 	 * @param array $instance
 	 */
 	public function widget( $args, $instance ) {
+		if ( isset( $instance['numPosts'] ) ) {
+			$numPosts = $instance['numPosts'];
+		} else {
+			$numPosts = 3;
+		}
 
+		if ( isset( $instance['widgetContent'] ) ) {
+			$widgetContent = $instance['widgetContent'];
+		} else {
+			$widgetContent = '%posts%';
+		}
+
+		if ( isset( $instance['postContent'] ) ) {
+			$postContent = $instance['postContent'];
+		} else {
+			$postContent = '<article><h1><a href="%post_permalink%">%post_title%</a></h1><p>%post_content%</p></article>';
+		}
+
+		$posts = "";
+		$query = new WP_Query( array( 'posts_per_page' => $numPosts ) );
+		if ( $query->have_posts() ) {
+			while ( $query->have_posts() ) {
+				$query->the_post();
+				$singlePostContent = $postContent;
+				$singlePostContent = str_replace( '%post_content%', get_the_content(), $singlePostContent );
+				$singlePostContent = str_replace( '%post_date%', get_the_date(), $singlePostContent );
+				$singlePostContent = str_replace( '%post_excerpt%', get_the_excerpt(), $singlePostContent );
+				$singlePostContent = str_replace( '%post_permalink%', get_the_permalink(), $singlePostContent );
+				$singlePostContent = str_replace( '%post_title%', get_the_title(), $singlePostContent );
+				$posts .= $singlePostContent;
+			}
+		}
+
+		$widgetContent = str_replace( '%posts%', $posts, $widgetContent );
+
+		echo $args['before_widget'];
+		if ( ! empty( $instance['title'] ) ) {
+			echo $args['before_title'] . $instance['title'] . $args['after_title'];
+		}
+		echo $widgetContent;
+		echo $args['after_widget'];
 	}
 
 	/**
@@ -35,7 +75,62 @@ class WPLastPostsWidget extends WP_Widget {
 	 * @return void
 	 */
 	public function form( $instance ) {
+		echo '<p>';
 
+		// Title
+		if ( isset( $instance['title'] ) ) {
+			$title = $instance['title'];
+		} else {
+			$title = __( 'New Title', 'wp-last-posts-widget' );
+		}
+
+		echo '<p><label for="' . $this->get_field_id( 'title' ) . '">' . __( 'Title', 'wp-last-posts-widget' )
+		     . ': </label>';
+		echo '<input class="widefat" id="' . $this->get_field_id( 'title' )
+		     . '" name="' . $this->get_field_name( 'title' )
+		     . '" type="text" value="' . esc_attr( $title ) . '" /></p>';
+
+		// Number of displayed posts
+		if ( isset( $instance['numPosts'] ) ) {
+			$num_posts = $instance['numPosts'];
+		} else {
+			$num_posts = __( '3', 'wp-last-posts-widget' );
+		}
+
+		echo '<p><label for="' . $this->get_field_id( 'numPosts' ) . '">'
+		     . __( 'Number of displayed posts', 'wp-last-posts-widget' )
+		     . ': </label>';
+		echo '<input class="widefat" id="' . $this->get_field_id( 'numPosts' )
+		     . '" name="' . $this->get_field_name( 'numPosts' )
+		     . '" type="number" min="0" max="100" value="' . esc_attr( $num_posts ) . '" /></p>';
+
+		// Widget Content
+		if ( isset( $instance['widgetContent'] ) ) {
+			$widgetContent = $instance['widgetContent'];
+		} else {
+			$widgetContent = '%posts%';
+		}
+
+		echo '<p><label for="' . $this->get_field_id( 'widgetContent' ) . '">' . __( 'Widget content',
+				'wp-last-posts-widget' ) . ': </label>';
+		echo '<textarea class="widefat" id="' . $this->get_field_id( 'widgetContent' ) . '" name="'
+		     . $this->get_field_name( 'widgetContent' ) . '">' . esc_attr( $widgetContent ) . '</textarea></p>';
+
+
+		// Widget Content
+		if ( isset( $instance['postContent'] ) ) {
+			$postContent = $instance['postContent'];
+		} else {
+			$postContent = '<article><h1><a href="%post_permalink%">%post_title%</a></h1><p>%post_content%</p></article>';
+		}
+
+		echo '<p><label for="' . $this->get_field_id( 'postContent' ) . '">' . __( 'Post content',
+				'wp-last-posts-widget' ) . ': </label>';
+		echo '<textarea class="widefat" id="' . $this->get_field_id( 'postContent' ) . '" name="'
+		     . $this->get_field_name( 'postContent' ) . '">' . esc_attr( $postContent ) . '</textarea></p>';
+
+
+		echo '</p>';
 	}
 
 	/**
@@ -44,9 +139,27 @@ class WPLastPostsWidget extends WP_Widget {
 	 * @param array $new_instance
 	 * @param array $old_instance
 	 *
-	 * @return array
+	 * @return array instance with up-to-date parameters
 	 */
 	public function update( $new_instance, $old_instance ) {
+		if ( is_array( $old_instance ) ) {
+			$instance = $old_instance;
+		} else {
+			$instance = array();
+		}
 
+		$instance['title']         = strip_tags( $new_instance['title'] );
+		$instance['widgetContent'] = $new_instance['widgetContent'];
+		$instance['postContent']   = $new_instance['postContent'];
+
+		if ( is_numeric( $new_instance['numPosts'] ) ) {
+			$instance['numPosts'] = strip_tags( $new_instance['numPosts'] );
+		} else {
+			add_action( 'admin_notices', function () {
+				echo '<div class="error">' . __( 'Number of posts must be an integer value.' ) . '</div>';
+			} );
+		}
+
+		return $instance;
 	}
 }
