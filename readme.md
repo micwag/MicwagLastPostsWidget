@@ -21,7 +21,7 @@ listed in the section **Tags**.
 3. Activate the plugin through the 'Plugins' menu in WordPress
 4. Add the widget in the 'Theme->Widget' menu of your page.
 
-# FAQ
+## FAQ
 
 ### I can't find the Widget section in my theme's options
 Maybe your theme doesn't support widgets. In this case, the widgets-option is not available. To use this plugin
