@@ -41,5 +41,5 @@ anyway, you must switch your theme to one which has widget-functionality or add 
 - **%post_date%**: Post date in default date format (can be set in Options->General)
 - **%post_excerpt%**: Excerpt of the post
 - **%post_permalink%**: Permalink to the full post
-- **%post_title%**: Title of the post
 - **%post_thumbnail%**: URL of the post thumbnail
+- **%post_title%**: Title of the post
