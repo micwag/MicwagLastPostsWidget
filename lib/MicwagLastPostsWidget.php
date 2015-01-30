@@ -130,7 +130,7 @@ class WPLastPostsWidget extends WP_Widget {
 		     . $this->get_field_name( 'widgetContent' ) . '">' . esc_attr( $widgetContent ) . '</textarea></p>';
 
 
-		// Widget Content
+		// Post Content
 		if ( isset( $instance['postContent'] ) ) {
 			$postContent = $instance['postContent'];
 		} else {
