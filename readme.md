@@ -1,4 +1,4 @@
-# WP Last Posts Widget
+# Micwag Last Posts Widget
 - **Contributors**: micwag
 - **Tags**: widget, free, post, news, developer, posts, simple
 - **Stable tag**: 4.1
