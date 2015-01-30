@@ -53,6 +53,19 @@ class WPLastPostsWidget extends WP_Widget {
 				$singlePostContent = str_replace( '%post_excerpt%', get_the_excerpt(), $singlePostContent );
 				$singlePostContent = str_replace( '%post_permalink%', get_the_permalink(), $singlePostContent );
 				$singlePostContent = str_replace( '%post_title%', get_the_title(), $singlePostContent );
+
+				if ( current_theme_supports( 'post-thumbnails' ) ) {
+					if ( has_post_thumbnail() ) {
+						$thumbnailId       = get_post_thumbnail_id();
+						$thumbnailLink     = wp_get_attachment_thumb_url( $thumbnailId );
+						$singlePostContent = str_replace( '%post_thumbnail%', $thumbnailLink, $singlePostContent );
+					} else {
+						$singlePostContent = str_replace( '%post_thumbnail%', '', $singlePostContent );
+					}
+				} else {
+					$singlePostContent = str_replace( '%post_thumbnail%', '', $singlePostContent );
+				}
+
 				$posts .= $singlePostContent;
 			}
 		}

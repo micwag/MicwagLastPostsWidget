@@ -6,7 +6,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 The widget displays the latest posts using custom markup which can be completely changed. It doesn't add anything
-other (stylesheets, javascripts etc.) to the page.
+else (stylesheets, javascripts etc.) to the page.
 
 == Description ==
 
@@ -42,3 +42,4 @@ anyway, you must switch your theme to one which has widget-functionality or add 
 * **%post_excerpt%**: Excerpt of the post
 * **%post_permalink%**: Permalink to the full post
 * **%post_title%**: Title of the post
+* **%post_thumbnail%**: URL of the post thumbnail
