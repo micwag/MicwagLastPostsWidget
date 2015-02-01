@@ -30,6 +30,12 @@ class MicwagLastPostsWidget extends WP_Widget {
 			$numPosts = 3;
 		}
 
+		if ( isset( $instance['maxExcerptLength'] ) ) {
+			$maxExcerptLength = $instance['maxExcerptLength'];
+		} else {
+			$maxExcerptLength = 12;
+		}
+
 		if ( isset( $instance['widgetContent'] ) ) {
 			$widgetContent = $instance['widgetContent'];
 		} else {
@@ -50,7 +56,18 @@ class MicwagLastPostsWidget extends WP_Widget {
 				$singlePostContent = $postContent;
 				$singlePostContent = str_replace( '%post_content%', get_the_content(), $singlePostContent );
 				$singlePostContent = str_replace( '%post_date%', get_the_date(), $singlePostContent );
-				$singlePostContent = str_replace( '%post_excerpt%', get_the_excerpt(), $singlePostContent );
+
+				$excerpt = get_the_excerpt();
+				if ( strlen( $excerpt ) > $maxExcerptLength ) {
+					$lastUsableSpace = strrpos( substr( $excerpt, 0, $maxExcerptLength ), ' ' );
+					if ( $lastUsableSpace === false ) {
+						$excerpt = substr( $excerpt, 0, $maxExcerptLength - 1 );
+					} else {
+						$excerpt = substr( $excerpt, 0, $lastUsableSpace );
+					}
+				}
+				$singlePostContent = str_replace( '%post_excerpt%', $excerpt, $singlePostContent );
+
 				$singlePostContent = str_replace( '%post_permalink%', get_the_permalink(), $singlePostContent );
 				$singlePostContent = str_replace( '%post_title%', get_the_title(), $singlePostContent );
 
@@ -117,6 +134,20 @@ class MicwagLastPostsWidget extends WP_Widget {
 		     . '" name="' . $this->get_field_name( 'numPosts' )
 		     . '" type="number" min="0" max="100" value="' . esc_attr( $num_posts ) . '" /></p>';
 
+		// Max excerpt length
+		if ( isset( $instance['maxExcerptLength'] ) ) {
+			$maxExcerptLength = $instance['maxExcerptLength'];
+		} else {
+			$maxExcerptLength = __( '120', 'micwag-last-posts-widget' );
+		}
+
+		echo '<p><label for="' . $this->get_field_id( 'maxExcerptLength' ) . '">'
+		     . __( 'Maximum excerpt length (chars)', 'micwag-last-posts-widget' )
+		     . ': </label>';
+		echo '<input class="widefat" id="' . $this->get_field_id( 'maxExcerptLength' )
+		     . '" name="' . $this->get_field_name( 'maxExcerptLength' )
+		     . '" type="number" min="0" max="1000" value="' . esc_attr( $maxExcerptLength ) . '" /></p>';
+
 		// Widget Content
 		if ( isset( $instance['widgetContent'] ) ) {
 			$widgetContent = $instance['widgetContent'];
@@ -170,6 +201,14 @@ class MicwagLastPostsWidget extends WP_Widget {
 		} else {
 			add_action( 'admin_notices', function () {
 				echo '<div class="error">' . __( 'Number of posts must be an integer value.' ) . '</div>';
+			} );
+		}
+
+		if ( is_numeric( $new_instance['maxExcerptLength'] ) ) {
+			$instance['maxExcerptLength'] = strip_tags( $new_instance['maxExcerptLength'] );
+		} else {
+			add_action( 'admin_notices', function () {
+				echo '<div class="error">' . __( 'Maximum excerpt length must be an integer value.' ) . '</div>';
 			} );
 		}
 
